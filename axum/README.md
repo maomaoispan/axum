@@ -1,29 +1,24 @@
 # axum
 
-`axum` is a web application framework that focuses on ergonomics and modularity.
+`axum` 是一个专注于人体工学和模块化的 web 框架。
 
 [![Build status](https://github.com/tokio-rs/axum/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/tokio-rs/axum/actions/workflows/CI.yml)
 [![Crates.io](https://img.shields.io/crates/v/axum)](https://crates.io/crates/axum)
 [![Documentation](https://docs.rs/axum/badge.svg)](https://docs.rs/axum)
 
-More information about this crate can be found in the [crate documentation][docs].
+关于这个库的更多信息可以在[crate 文档][docs]找到.
 
-## High level features
+## 高级特征
 
-- Route requests to handlers with a macro free API.
-- Declaratively parse requests using extractors.
-- Simple and predictable error handling model.
-- Generate responses with minimal boilerplate.
-- Take full advantage of the [`tower`] and [`tower-http`] ecosystem of
-  middleware, services, and utilities.
+- 使用无宏 API 将请求路由到处理程序。
+- 使用提取器（extractors）声明式地解析请求。
+- 简单并且可以预测的错误处理模型。
+- 使用最小模板生成响应。
+- 充分利用 `tower` 和 `tower-http` 的中间件生态系统、服务和工具链。
 
-In particular the last point is what sets `axum` apart from other frameworks.
-`axum` doesn't have its own middleware system but instead uses
-[`tower::Service`]. This means `axum` gets timeouts, tracing, compression,
-authorization, and more, for free. It also enables you to share middleware with
-applications written using [`hyper`] or [`tonic`].
+尤其是最后一点是 `axum` 和 `其他框架的区别。axum` 没有自己的中间件系统，而是基于 [`tower::Service`]。这也意味着 `axum` 无偿拥有超时、跟踪、压缩、授权等功能。它还使您能够与使用 `hyper` 或 `tonic` 编写的应用程序共享中间件。
 
-## Usage example
+## 使用案例
 
 ```rust
 use axum::{
@@ -37,54 +32,56 @@ use std::net::SocketAddr;
 
 #[tokio::main]
 async fn main() {
-    // initialize tracing
+	// 初始化跟踪器
     tracing_subscriber::fmt::init();
 
-    // build our application with a route
+    // 基于一个路由构建我们的应用
     let app = Router::new()
-        // `GET /` goes to `root`
+        // `GET /` 请求到 `root`服务
         .route("/", get(root))
-        // `POST /users` goes to `create_user`
+
+        // `POST /users` 请求到 `create_user`服务
         .route("/users", post(create_user));
 
-    // run our app with hyper
-    // `axum::Server` is a re-export of `hyper::Server`
+    // 基于 hyper 启动服务
+    // `axum::Server` 是基于 `hyper::Server`的二次分装
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::debug!("listening on {}", addr);
+
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
-// basic handler that responds with a static string
+
+// 返回一个静态字符串的最基本处理程序
 async fn root() -> &'static str {
     "Hello, World!"
 }
 
 async fn create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
+    // 本参数告诉 axum 把请求体的 JSON 格式解析为 `CreateUser` 类型
     Json(payload): Json<CreateUser>,
 ) -> (StatusCode, Json<User>) {
-    // insert your application logic here
+
+    // 应用的具体业务逻辑
     let user = User {
         id: 1337,
         username: payload.username,
     };
 
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
+    // 将 user 数据以 `201 Created` 状态码的 JSON 数据格式返回
     (StatusCode::CREATED, Json(user))
 }
 
-// the input to our `create_user` handler
+//  创建用户应用的输入参数 `create_user`
 #[derive(Deserialize)]
 struct CreateUser {
     username: String,
 }
 
-// the output to our `create_user` handler
+// 创建用户应用的输出参数 `create_user`
 #[derive(Serialize)]
 struct User {
     id: u64,
@@ -154,7 +151,7 @@ additional terms or conditions.
 [contributing]: https://github.com/tokio-rs/axum/blob/main/CONTRIBUTING.md
 [chat]: https://discord.gg/tokio
 [discussion]: https://github.com/tokio-rs/axum/discussions/new?category=q-a
-[`tower::Service`]: https://docs.rs/tower/latest/tower/trait.Service.html
+[`tower::service`]: https://docs.rs/tower/latest/tower/trait.Service.html
 [ecosystem]: https://github.com/tokio-rs/axum/blob/main/ECOSYSTEM.md
 [showcases]: https://github.com/tokio-rs/axum/blob/main/ECOSYSTEM.md#project-showcase
 [tutorials]: https://github.com/tokio-rs/axum/blob/main/ECOSYSTEM.md#tutorials
