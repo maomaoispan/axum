@@ -1,7 +1,8 @@
-Types and traits for extracting data from requests.
+从请求中提取数据的类型和特征。 *Types and traits for extracting data from requests.*
 
 # Table of contents
 
+- [Table of contents](#table-of-contents)
 - [Intro](#intro)
 - [Common extractors](#common-extractors)
 - [Applying multiple extractors](#applying-multiple-extractors)
@@ -10,6 +11,9 @@ Types and traits for extracting data from requests.
 - [Customizing extractor responses](#customizing-extractor-responses)
 - [Accessing inner errors](#accessing-inner-errors)
 - [Defining custom extractors](#defining-custom-extractors)
+  - [Implementing `FromRequestParts`](#implementing-fromrequestparts)
+  - [Implementing `FromRequest`](#implementing-fromrequest)
+  - [Cannot implement both `FromRequest` and `FromRequestParts`](#cannot-implement-both-fromrequest-and-fromrequestparts)
 - [Accessing other extractors in `FromRequest` or `FromRequestParts` implementations](#accessing-other-extractors-in-fromrequest-or-fromrequestparts-implementations)
 - [Request body limits](#request-body-limits)
 - [Request body extractors](#request-body-extractors)

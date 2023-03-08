@@ -12,7 +12,7 @@ use std::{
 };
 use tower_service::Service;
 
-/// Extractor and response for extensions.
+/// 扩展的提取器（Extractor）和响应（response）。*Extractor and response for extensions.*
 ///
 /// # As extractor
 ///

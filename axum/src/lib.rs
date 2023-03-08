@@ -1,9 +1,10 @@
 #![cfg_attr(nightly_error_messages, feature(rustc_attrs))]
 //! axum 是一个专注于人体工学和模块化的 web 框架。
+//! 
 //! *axum is a web application framework that focuses on ergonomics and modularity.*
 //! 
 //!
-//! # 内容清单 Table of contents 
+//! # 内容清单 *Table of contents* 
 //! 
 //!
 //! - [高级特征 *High-level  features*](#high-level-features)
@@ -12,7 +13,7 @@
 //! - [路由 *Routing*](#routing) 
 //! - [Handlers](#handlers) 
 //! - [Extractors](#extractors) 
-//! - [响应 *Responses*](#responses) 
+//! - [Responses](#responses) 
 //! - [错误处理 *Error handling*](#error-handling) 
 //! - [中间件 *Middleware*](#middleware) 
 //! - [Handlers 之间的数据共享 *Sharing state with handlers*](#sharing-state-with-handlers) 
@@ -31,7 +32,7 @@
 //! *Take full advantage of the [`tower`] and [`tower-http`] ecosystem of
 //!   middleware, services, and utilities.* 
 //!
-//! 尤其是最后一点是 `axum` 和 `其他框架的区别。axum` 没有自己的中间件系统，
+//! 特别是最后一点是 `axum` 和 `其他框架的区别。axum` 没有自己的中间件系统，
 //! 而是基于 [`tower::Service`]。这也意味着 `axum` 轻松拥有超时、跟踪、压缩、授权等中间件功能。
 //! 它还能让您同基于 `hyper` 或 `tonic` 编写的应用共享中间件。
 //! 
@@ -81,7 +82,7 @@
 //!
 //! # 路由 *Routing*
 //!
-//! [`Router`] 路由用于配置哪些路径指向哪些服务网：
+//! [`Router`] 路由用于配置哪些路径指向哪些服务：
 //! 
 //! *[`Router`] is used to setup which paths goes to which services:*
 //!
@@ -108,41 +109,50 @@
 //!
 //! 关于路由的更多细节请查看 [`Router`]章节。
 //! 
-//! See [`Router`] for more details on routing.
+//! *See [`Router`] for more details on routing.*
 //!
-//! # Handlers？ *Handlers*
+//! # Handlers
 //!
 #![doc = include_str!("docs/handlers_intro.md")]
 //!
 //! 关于 handlers 的更多细节请查看 [`handler`](crate::handler) 章节。
+//! 
 //! *See [`handler`](crate::handler) for more details on handlers.*
 //!
 //! # Extractors
+//! 
+//! 一个 extractor 是一个实现了 [`FromRequest`] or [`FromRequestParts`] 的类型。
+//! Extractors 是你如何分离输入请求以获取处理程序所需部分的方式。
 //!
-//! An extractor is a type that implements [`FromRequest`] or [`FromRequestParts`]. Extractors are
-//! how you pick apart the incoming request to get the parts your handler needs.
+//! *An extractor is a type that implements [`FromRequest`] or [`FromRequestParts`]. Extractors are
+//! how you pick apart the incoming request to get the parts your handler needs.*
 //!
 //! ```rust
 //! use axum::extract::{Path, Query, Json};
 //! use std::collections::HashMap;
 //!
 //! // `Path` gives you the path parameters and deserializes them.
+//! // `Paht` 给您提供路径参数，并且反序列化它们。
 //! async fn path(Path(user_id): Path<u32>) {}
 //!
 //! // `Query` gives you the query parameters and deserializes them.
+//! // `Query` 给您提供查询参数，并且反序列化它们。
 //! async fn query(Query(params): Query<HashMap<String, String>>) {}
 //!
-//! // Buffer the request body and deserialize it as JSON into a
-//! // `serde_json::Value`. `Json` supports any type that implements
-//! // `serde::Deserialize`.
+//! // Buffer the request body and deserialize it as JSON into a `serde_json::Value`. 
+//! // 缓冲请求主体并将其作为 JSON 反序列化为 `serde_json::Value`。
+//! // 
+//! // `Json` supports any type that implements `serde::Deserialize`.
+//! // `Json` 支持任何实现了 `serde::Deserialize` 的类型。
 //! async fn json(Json(payload): Json<serde_json::Value>) {}
 //! ```
 //!
-//! See [`extract`](crate::extract) for more details on extractors.
+//! 关于 extractors 的更多详情请查看 [`extract`](crate::extract) 章节。
+//! *See [`extract`](crate::extract) for more details on extractors.*
 //!
 //! # Responses
-//!
-//! Anything that implements [`IntoResponse`] can be returned from handlers.
+//! 任何实现了 [`IntoResponse`] 特征的对象均能从 handlers 中返回。
+//! *Anything that implements [`IntoResponse`] can be returned from handlers.*
 //!
 //! ```rust,no_run
 //! use axum::{
@@ -152,12 +162,14 @@
 //!     Router,
 //! };
 //! use serde_json::{Value, json};
-//!
+//! 
+//! // `&'static str` 返回一个 `content-type: text/plain; charset=utf-8` 的 `200 OK` 响应体。
 //! // `&'static str` becomes a `200 OK` with `content-type: text/plain; charset=utf-8`
 //! async fn plain_text() -> &'static str {
 //!     "foo"
 //! }
 //!
+//! // `Json`可以从任何实现了 `serde::Serialize` 特征的对象得到一个 content-type 为 `application/json` 的响应体
 //! // `Json` gives a content-type of `application/json` and works with any type
 //! // that implements `serde::Serialize`
 //! async fn json() -> Json<Value> {
@@ -171,35 +183,49 @@
 //! # axum::Server::bind(&"".parse().unwrap()).serve(app.into_make_service()).await.unwrap();
 //! # };
 //! ```
+//! 关于构建响应体的更多细节请查看 [`response`](crate::response) 章节。
+//! 
+//! *See [`response`](crate::response) for more details on building responses.*
 //!
-//! See [`response`](crate::response) for more details on building responses.
+//! # 错误处理 Error handling
 //!
-//! # Error handling
-//!
-//! axum aims to have a simple and predictable error handling model. That means
+//! axum 的目标是实现一套简单的、可预测的错误处理模型。
+//! 这意味着将错误转换为响应很简单，并且可以保证所有错误都得到处理
+//! 
+//! *axum aims to have a simple and predictable error handling model. That means
 //! it is simple to convert errors into responses and you are guaranteed that
-//! all errors are handled.
+//! all errors are handled.*
 //!
-//! See [`error_handling`](crate::error_handling) for more details on axum's
-//! error handling model and how to handle errors gracefully.
+//! 更多关于 axum's 的错误处理模型和怎么优雅地处理错误，
+//! 请查看 [`error_handling`](crate::error_handling) 章节。
+//! 
+//! *See [`error_handling`](crate::error_handling) for more details on axum's
+//! error handling model and how to handle errors gracefully.*
 //!
-//! # Middleware
+//! # 中间件 *Middleware*
 //!
-//! There are several different ways to write middleware for axum. See
-//! [`middleware`](crate::middleware) for more details.
+//! 编写 axum 的中间件有许多种方式。详细信息请查看 [`middleware`](crate::middleware) 章节。
+//! 
+//! *There are several different ways to write middleware for axum. 
+//! See [`middleware`](crate::middleware) for more details.*
 //!
-//! # Sharing state with handlers
+//! # handlers 状态共享 *Sharing state with handlers*
 //!
-//! It is common to share some state between handlers. For example, a
+//! 在处理程序之间共享一些状态是很常见的。
+//! 例如：数据库连接池或者连接到其他服务的客户端均需要共享。
+//! 
+//! *It is common to share some state between handlers. For example, a
 //! pool of database connections or clients to other services may need to
-//! be shared.
+//! be shared.*
 //!
-//! The three most common ways of doing that are:
-//! - Using the [`State`] extractor
-//! - Using request extensions
-//! - Using closure captures
+//! 常规的做法有以下几种：
+//! 
+//! *The three most common ways of doing that are:*
+//! - 使用 [`State`] extractor *Using the [`State`] extractor*
+//! - 使用请求扩展 *Using request extensions*
+//! - 使用闭包捕获 *Using closure captures*
 //!
-//! ## Using the [`State`] extractor
+//! ## 使用 [`State`] extractor *Using the [`State`] extractor*
 //!
 //! ```rust,no_run
 //! use axum::{
@@ -229,15 +255,22 @@
 //! # };
 //! ```
 //!
-//! You should prefer using [`State`] if possible since it's more type safe. The downside is that
-//! it's less dynamic than request extensions.
+//! 如果可能，您应该更倾向使用 [`State`]，因为它更安全。缺点是它不如请求扩展灵活。
+//! 
+//! *You should prefer using [`State`] if possible since it's more type safe. The downside is that
+//! it's less dynamic than request extensions.*
 //!
-//! See [`State`] for more details about accessing state.
+//! 关于访问状态的更多详情，请查看 [`State`] 章节。
+//! 
+//! *See [`State`] for more details about accessing state.*
 //!
-//! ## Using request extensions
+//! ## 使用请求扩展 *Using request extensions*
 //!
-//! Another way to extract state in handlers is using [`Extension`](crate::extract::Extension) as
-//! layer and extractor:
+//! 另外一种在 handlers 中提取状态的方法是把 [`Extension`](crate::extract::Extension) 
+//! 作为 layer 和 extractor：
+//! 
+//! *Another way to extract state in handlers is using [`Extension`](crate::extract::Extension) as
+//! layer and extractor:*
 //!
 //! ```rust,no_run
 //! use axum::{
@@ -266,15 +299,20 @@
 //! # axum::Server::bind(&"".parse().unwrap()).serve(app.into_make_service()).await.unwrap();
 //! # };
 //! ```
+//! 
+//! 这种方式的缺点是，当你尝试提取一个不存在的 extension 时候，会得到一个运行时错误（特别是 `500 Internal Server Error`响应），
+//! 原因也许是你忘记添加中间件，或者你正在提取一个错误的类型。
 //!
-//! The downside to this approach is that you'll get runtime errors
+//! *The downside to this approach is that you'll get runtime errors
 //! (specifically a `500 Internal Server Error` response) if you try and extract
 //! an extension that doesn't exist, perhaps because you forgot to add the
-//! middleware or because you're extracting the wrong type.
+//! middleware or because you're extracting the wrong type.*
 //!
-//! ## Using closure captures
+//! ## 使用闭包捕获 *Using closure captures*
 //!
-//! State can also be passed directly to handlers using closure captures:
+//! 状态也能直接通过闭包捕获的方式传递到 handlers：
+//! 
+//! *State can also be passed directly to handlers using closure captures:*
 //!
 //! ```rust,no_run
 //! use axum::{
@@ -325,19 +363,26 @@
 //! # };
 //! ```
 //!
-//! The downside to this approach is that it's a little more verbose than using
-//! [`State`] or extensions.
+//! 这种方法的缺点是它比使用 State 或扩展更冗长。
+//! 
+//! *The downside to this approach is that it's a little more verbose than using
+//! [`State`] or extensions.*
 //!
-//! # Building integrations for axum
+//! # axum 的构建集成 *Building integrations for axum*
 //!
-//! Libraries authors that want to provide [`FromRequest`], [`FromRequestParts`], or
+//! 想要提供 FromRequest、 FromRequestPart 或者 IntoResponse 实现的库作者尽量基于 [`axum-core`]，而不是 `axum`。
+//! [`axum-core`] 包含核心类型和特征，不太可能收到破坏性变动。
+//! 
+//! *Libraries authors that want to provide [`FromRequest`], [`FromRequestParts`], or
 //! [`IntoResponse`] implementations should depend on the [`axum-core`] crate, instead of `axum` if
 //! possible. [`axum-core`] contains core types and traits and is less likely to receive breaking
-//! changes.
+//! changes.*
 //!
-//! # Required dependencies
+//! # 必要依赖库 *Required dependencies*
 //!
-//! To use axum there are a few dependencies you have to pull in as well:
+//! 要使用 axum，您还必须引入一些依赖库：
+//! 
+//! *To use axum there are a few dependencies you have to pull in as well:*
 //!
 //! ```toml
 //! [dependencies]
@@ -347,42 +392,56 @@
 //! tower = "<latest-version>"
 //! ```
 //!
-//! The `"full"` feature for hyper and tokio isn't strictly necessary but it's
-//! the easiest way to get started.
+//! hyper 和 tokio 的“full” feature 并非绝对必要，但这是最简单的入门方式。
+//! 
+//! *The `"full"` feature for hyper and tokio isn't strictly necessary but it's
+//! the easiest way to get started.*
 //!
-//! Note that [`hyper::Server`] is re-exported by axum so if that's all you need
-//! then you don't have to explicitly depend on hyper.
+//! 注意 [`hyper::Server`] 被 axum 重新导出，所以非必要你不需要显式的引入 hyper。
+//! 
+//! *Note that [`hyper::Server`] is re-exported by axum so if that's all you need
+//! then you don't have to explicitly depend on hyper.*
 //!
-//! Tower isn't strictly necessary either but helpful for testing. See the
-//! testing example in the repo to learn more about testing axum apps.
+//! 
+//! Tower 也不是绝对必要的，但有对测试有用。
+//! 在代码仓库查看测试案例，学习更多关于 axum 应用的测试。
+//! 
+//! *Tower isn't strictly necessary either but helpful for testing. See the
+//! testing example in the repo to learn more about testing axum apps.*
 //!
-//! # Examples
+//! # 用例集合 *Examples*
 //!
-//! The axum repo contains [a number of examples][examples] that show how to put all the
-//! pieces together.
+//! axum 官方仓库包括了[大量的用例][examples]，展示了如何将所有的程序碎片进行集成。
+//! 
+//! *The axum repo contains [a number of examples][examples] that show how to put all the
+//! pieces together.*
 //!
 //! # Feature flags
 //!
-//! axum uses a set of [feature flags] to reduce the amount of compiled and
-//! optional dependencies.
+//! axum 使用一组[feature flags]来减少已编译和可选依赖项的数量。
+//! 
+//! *axum uses a set of [feature flags] to reduce the amount of compiled and
+//! optional dependencies.*
 //!
-//! The following optional features are available:
+//! 以下可选 features 均是可用的：
+//! 
+//! *The following optional features are available:*
 //!
-//! Name | Description | Default?
+//! 名称 *Name* | 描述 *Description* | 默认？ *Default?*
 //! ---|---|---
-//! `headers` | Enables extracting typed headers via [`TypedHeader`] | No
-//! `http1` | Enables hyper's `http1` feature | Yes
-//! `http2` | Enables hyper's `http2` feature | No
-//! `json` | Enables the [`Json`] type and some similar convenience functionality | Yes
-//! `macros` | Enables optional utility macros | No
-//! `matched-path` | Enables capturing of every request's router path and the [`MatchedPath`] extractor | Yes
-//! `multipart` | Enables parsing `multipart/form-data` requests with [`Multipart`] | No
-//! `original-uri` | Enables capturing of every request's original URI and the [`OriginalUri`] extractor | Yes
-//! `tokio` | Enables `tokio` as a dependency and `axum::Server`, `SSE` and `extract::connect_info` types. | Yes
-//! `tower-log` | Enables `tower`'s `log` feature | Yes
-//! `ws` | Enables WebSockets support via [`extract::ws`] | No
-//! `form` | Enables the `Form` extractor | Yes
-//! `query` | Enables the `Query` extractor | Yes
+//! `headers`           | 启用通过 [`TypedHeader`] 提取类型化的标头                                   <br />*Enables extracting typed headers via [`TypedHeader`]*                                              | No
+//! `http1`             | 启用 hyper's `http1` feature                                             <br />*Enables hyper's `http1` feature*                                                                  | Yes
+//! `http2`             | 启用 hyper's `http2` feature                                             <br />*Enables hyper's `http2` feature*                                                                  | No
+//! `json`              | 启用 [`Json`] 类型和一些类似的便利功能                                       <br />*Enables the [`Json`] type and some similar convenience functionality*                             | Yes
+//! `macros`            | 启用宏工具                                                                <br />*Enables optional utility macros*                                                                   | No
+//! `matched-path`      | 启用捕获每个请求的路由器路径和 [`MatchedPath`] 提取器                          <br />*Enables capturing of every request's router path and the [`MatchedPath`] extractor*                | Yes
+//! `multipart`         | 启用通过 [`Multipart`] 解析 `multipart/form-data` 请求                     <br />*Enables parsing `multipart/form-data` requests with [`Multipart`]*                                 | No
+//! `original-uri`      | 启用通过 [`OriginalUri`] extractor 捕获每个请求的 original URI              <br />*Enables capturing of every request's original URI and the [`OriginalUri`] extractor*               | Yes
+//! `tokio`             | 启用 tokio 作为依赖项和 axum::Server、SSE 和 extract::connect_info 类型      <br />*Enables `tokio` as a dependency and `axum::Server`, `SSE` and `extract::connect_info` types.*      | Yes
+//! `tower-log`         | 启用 `tower` 的 `log` feature                                             <br />*Enables `tower`'s `log` feature*                                                                   | Yes
+//! `ws`                | 通过[`extract::ws`] 启用 WebSockets                                        <br />*Enables WebSockets support via [`extract::ws`]*                                                   | No
+//! `form`              | 启用 `Form` extractor                                                     <br />*Enables the `Form` extractor*                                                                     | Yes
+//! `query`             | 启用`Query` extractor                                                     <br />*Enables the `Query` extractor                                                                     | Yes
 //!
 //! [`TypedHeader`]: crate::extract::TypedHeader
 //! [`MatchedPath`]: crate::extract::MatchedPath

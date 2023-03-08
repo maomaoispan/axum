@@ -8,7 +8,7 @@ mod sealed {
     impl<B> Sealed<B> for http::Request<B> {}
 }
 
-/// Extension trait that adds additional methods to [`Request`].
+/// 向 Request 添加额外方法的扩展 trait。 *Extension trait that adds additional methods to [`Request`].*
 pub trait RequestExt<B>: sealed::Sealed<B> + Sized {
     /// Apply an extractor to this `Request`.
     ///

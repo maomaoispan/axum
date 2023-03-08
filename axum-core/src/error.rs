@@ -1,7 +1,7 @@
 use crate::BoxError;
 use std::{error::Error as StdError, fmt};
 
-/// Errors that can happen when using axum.
+/// 使用 axum 时可能发生的错误。 *Errors that can happen when using axum.*
 #[derive(Debug)]
 pub struct Error {
     inner: BoxError,

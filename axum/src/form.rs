@@ -10,7 +10,7 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::ops::Deref;
 
-/// URL encoded extractor and response.
+/// URL 编码提取器和响应. *URL encoded extractor and response.*
 ///
 /// # As extractor
 ///

@@ -1,7 +1,8 @@
-Types and traits for generating responses.
+生成响应的类型和特征。 *Types and traits for generating responses.*
 
 # Table of contents
 
+- [Table of contents](#table-of-contents)
 - [Building responses](#building-responses)
 - [Returning different response types](#returning-different-response-types)
 - [Regarding `impl IntoResponse`](#regarding-impl-intoresponse)

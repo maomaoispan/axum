@@ -1,4 +1,4 @@
-//! Routing between [`Service`]s and handlers.
+//! 连接[`Service`]s 和 handlers 的路由。 *Routing between [`Service`]s and handlers.*
 
 use self::{future::RouteFuture, not_found::NotFound, strip_prefix::StripPrefix};
 #[cfg(feature = "tokio")]
@@ -47,7 +47,7 @@ pub use self::method_routing::{
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct RouteId(u32);
 
-/// The router type for composing handlers and services.
+/// 用于构成 handlers 和 services 的路由类型。 *The router type for composing handlers and services.*
 #[must_use]
 pub struct Router<S = (), B = Body> {
     routes: HashMap<RouteId, Endpoint<S, B>>,

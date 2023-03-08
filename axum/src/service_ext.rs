@@ -3,7 +3,7 @@ use crate::extract::connect_info::IntoMakeServiceWithConnectInfo;
 use crate::routing::IntoMakeService;
 use tower_service::Service;
 
-/// Extension trait that adds additional methods to any [`Service`].
+/// 向 Service 添加额外方法的扩展 trait。*Extension trait that adds additional methods to any [`Service`].*
 pub trait ServiceExt<R>: Service<R> + Sized {
     /// Convert this service into a [`MakeService`], that is a [`Service`] whose
     /// response is another service.

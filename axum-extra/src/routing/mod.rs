@@ -25,7 +25,6 @@ pub use axum_macros::TypedPath;
 #[cfg(feature = "typed-routing")]
 pub use self::typed::{SecondElementIs, TypedPath};
 
-/// Extension trait that adds additional methods to [`Router`].
 pub trait RouterExt<S, B>: sealed::Sealed {
     /// Add a typed `GET` route to the router.
     ///

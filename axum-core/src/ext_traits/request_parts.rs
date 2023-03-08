@@ -7,7 +7,7 @@ mod sealed {
     impl Sealed for http::request::Parts {}
 }
 
-/// Extension trait that adds additional methods to [`Parts`].
+/// 向 Parts 添加额外方法的扩展 trait。*Extension trait that adds additional methods to [`Parts`].*
 pub trait RequestPartsExt: sealed::Sealed + Sized {
     /// Apply an extractor to this `Parts`.
     ///
