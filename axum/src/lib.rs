@@ -1,44 +1,54 @@
 #![cfg_attr(nightly_error_messages, feature(rustc_attrs))]
-//! axum is a web application framework that focuses on ergonomics and modularity.
+//! axum 是一个专注于人体工学和模块化的 web 框架。
+//! *axum is a web application framework that focuses on ergonomics and modularity.*
+//! 
 //!
-//! # Table of contents
+//! # 内容清单 Table of contents 
+//! 
 //!
-//! - [High-level features](#high-level-features)
-//! - [Compatibility](#compatibility)
-//! - [Example](#example)
-//! - [Routing](#routing)
-//! - [Handlers](#handlers)
-//! - [Extractors](#extractors)
-//! - [Responses](#responses)
-//! - [Error handling](#error-handling)
-//! - [Middleware](#middleware)
-//! - [Sharing state with handlers](#sharing-state-with-handlers)
-//! - [Building integrations for axum](#building-integrations-for-axum)
-//! - [Required dependencies](#required-dependencies)
-//! - [Examples](#examples)
-//! - [Feature flags](#feature-flags)
+//! - [高级特征 *High-level  features*](#high-level-features)
+//! - [兼容性 *Compatibility*](#compatibility) 
+//! - [用例 *Example*](#example) 
+//! - [路由 *Routing*](#routing) 
+//! - [Handlers](#handlers) 
+//! - [Extractors](#extractors) 
+//! - [响应 *Responses*](#responses) 
+//! - [错误处理 *Error handling*](#error-handling) 
+//! - [中间件 *Middleware*](#middleware) 
+//! - [Handlers 之间的数据共享 *Sharing state with handlers*](#sharing-state-with-handlers) 
+//! - [axum 构建集成 *Building integrations for axum*](#building-integrations-for-axum) 
+//! - [必要的依赖 *Required dependencies*](#required-dependencies) 
+//! - [用例集合 *Examples*](#examples) 
+//! - [Feature flags](#feature-flags) 
 //!
-//! # High-level features
+//! # 高级特征 *High-level features*
 //!
-//! - Route requests to handlers with a macro-free API.
-//! - Declaratively parse requests using extractors.
-//! - Simple and predictable error handling model.
-//! - Generate responses with minimal boilerplate.
-//! - Take full advantage of the [`tower`] and [`tower-http`] ecosystem of
-//!   middleware, services, and utilities.
+//! - 使用无宏 API 将请求路由到 handlers。 *Route requests to handlers with a macro-free API.* 
+//! - 使用 extractors 声明式地解析请求。 *Declaratively parse requests using extractors.*
+//! - 简单并且可以预测的错误处理模型。 *Simple and predictable error handling model.*
+//! - 使用最小模板生成响应。*Generate responses with minimal boilerplate.*
+//! - 充分利用 [`tower`] 和 [`tower-http`] 的中间件生态系统、服务和工具链。
+//! *Take full advantage of the [`tower`] and [`tower-http`] ecosystem of
+//!   middleware, services, and utilities.* 
 //!
-//! In particular, the last point is what sets `axum` apart from other frameworks.
+//! 尤其是最后一点是 `axum` 和 `其他框架的区别。axum` 没有自己的中间件系统，
+//! 而是基于 [`tower::Service`]。这也意味着 `axum` 轻松拥有超时、跟踪、压缩、授权等中间件功能。
+//! 它还能让您同基于 `hyper` 或 `tonic` 编写的应用共享中间件。
+//! 
+//! *In particular, the last point is what sets `axum` apart from other frameworks.
 //! `axum` doesn't have its own middleware system but instead uses
 //! [`tower::Service`]. This means `axum` gets timeouts, tracing, compression,
 //! authorization, and more, for free. It also enables you to share middleware with
-//! applications written using [`hyper`] or [`tonic`].
+//! applications written using [`hyper`] or [`tonic`].*
 //!
-//! # Compatibility
+//! # 兼容性 *Compatibility*
 //!
-//! axum is designed to work with [tokio] and [hyper]. Runtime and
-//! transport layer independence is not a goal, at least for the time being.
+//! axum 是基于 [tokio] 和 [hyper] 设计而运行的。至少当前运行时和传输层是相互独立的，但这并不是主要目标。
+//! 
+//! *axum is designed to work with [tokio] and [hyper]. Runtime and
+//! transport layer independence is not a goal, at least for the time being.*
 //!
-//! # Example
+//! # 简单用例 *Example*
 //!
 //! The "Hello, World!" of axum is:
 //!
@@ -50,34 +60,43 @@
 //!
 //! #[tokio::main]
 //! async fn main() {
+//!     // 基于单个路由构建我们的程序 
 //!     // build our application with a single route
 //!     let app = Router::new().route("/", get(|| async { "Hello, World!" }));
 //!
 //!     // run it with hyper on localhost:3000
+//!     // 基于 hyper 将应用运行在 localhost:3000 端口上
 //!     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
 //!         .serve(app.into_make_service())
 //!         .await
 //!         .unwrap();
 //! }
 //! ```
+//! 
+//! 注意：使用 `#[tokio::main]` 宏，需要你开启 tokio 的 `macros` 和 `rt-multi-thread` 这两个 Feature，
+//! 或者只使用 `full` 开启全部 Feature (`cargo add tokio --features macros,rt-multi-thread`)。
 //!
-//! Note using `#[tokio::main]` requires you enable tokio's `macros` and `rt-multi-thread` features
-//! or just `full` to enable all features (`cargo add tokio --features macros,rt-multi-thread`).
+//! *Note using `#[tokio::main]` requires you enable tokio's `macros` and `rt-multi-thread` features
+//! or just `full` to enable all features (`cargo add tokio --features macros,rt-multi-thread`).*
 //!
-//! # Routing
+//! # 路由 *Routing*
 //!
-//! [`Router`] is used to setup which paths goes to which services:
+//! [`Router`] 路由用于配置哪些路径指向哪些服务网：
+//! 
+//! *[`Router`] is used to setup which paths goes to which services:*
 //!
 //! ```rust
 //! use axum::{Router, routing::get};
 //!
 //! // our router
+//! // 我们的路由
 //! let app = Router::new()
 //!     .route("/", get(root))
 //!     .route("/foo", get(get_foo).post(post_foo))
 //!     .route("/foo/bar", get(foo_bar));
 //!
 //! // which calls one of these handlers
+//! // 调用这些处理器的其中一个
 //! async fn root() {}
 //! async fn get_foo() {}
 //! async fn post_foo() {}
@@ -87,13 +106,16 @@
 //! # };
 //! ```
 //!
+//! 关于路由的更多细节请查看 [`Router`]章节。
+//! 
 //! See [`Router`] for more details on routing.
 //!
-//! # Handlers
+//! # Handlers？ *Handlers*
 //!
 #![doc = include_str!("docs/handlers_intro.md")]
 //!
-//! See [`handler`](crate::handler) for more details on handlers.
+//! 关于 handlers 的更多细节请查看 [`handler`](crate::handler) 章节。
+//! *See [`handler`](crate::handler) for more details on handlers.*
 //!
 //! # Extractors
 //!
