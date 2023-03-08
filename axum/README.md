@@ -94,28 +94,23 @@ the [example directory][examples].
 
 See the [crate documentation][docs] for way more examples.
 
-## Performance
+## 性能
 
-`axum` is a relatively thin layer on top of [`hyper`] and adds very little
-overhead. So `axum`'s performance is comparable to [`hyper`]. You can find
-benchmarks [here](https://github.com/programatik29/rust-web-benchmarks) and
-[here](https://web-frameworks-benchmark.netlify.app/result?l=rust).
+`axum` 是一个基于 `hyper` 之上轻量层，性能开销很小。因此 `axum` 的性能和 `hyper` 几乎一样，你可以在[这里](https://web-frameworks-benchmark.netlify.app/result?l=rust)和[这里](https://github.com/programatik29/rust-web-benchmarks)找到性能测试报告。
+## 安全
 
-## Safety
+这个库使用 `#![forbid(unsafe_code)]` 保证任何内容都是基于百分之百安全的 Rust代码编写。
 
-This crate uses `#![forbid(unsafe_code)]` to ensure everything is implemented in
-100% safe Rust.
+## Rust 的最低支持版本
 
-## Minimum supported Rust version
+axum 的 MSRV （ Minimum supported Rust version） 是1.6.0。
 
-axum's MSRV is 1.60.
+## 案例
 
-## Examples
+案例（[examples]）文件夹包括了使用 `axum` 的各种案例. 文档
+[docs] 也提供了好多代码片段和案例. 完整案例请查看社区维护的案例[showcases] 火 手册[tutorials].
 
-The [examples] folder contains various examples of how to use `axum`. The
-[docs] also provide lots of code snippets and examples. For full-fledged examples, check out community-maintained [showcases] or [tutorials].
-
-## Getting Help
+## 获得帮助
 
 In the `axum`'s repo we also have a [number of examples][examples] showing how
 to put everything together. Community-maintained [showcases] and [tutorials] also demonstrate how to use `axum` for real-world applications. You're also welcome to ask in the [Discord channel][chat] or open a [discussion] with your question.
