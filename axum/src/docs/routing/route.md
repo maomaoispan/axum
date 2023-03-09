@@ -1,7 +1,12 @@
-Add another route to the router.
+添加另一个路由到路由器。
 
-`path` is a string of path segments separated by `/`. Each segment
-can be either static, a capture, or a wildcard.
+*Add another route to the router.*
+
+`path` 是一个由`/`分割的字符串路径段。
+每个段可以是静态的、变量的或通配符。
+
+*`path` is a string of path segments separated by `/`. Each segment
+can be either static, a capture, or a wildcard.*
 
 `method_router` is the [`MethodRouter`] that should receive the request if the
 path matches `path`. `method_router` will commonly be a handler wrapped in a method

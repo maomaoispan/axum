@@ -100,6 +100,8 @@ where
 {
     /// Create a new `Router`.
     ///
+    /// 除非你添加额外的路由，否则这将对所有请求做出 404 Not Found 响应。
+    /// 
     /// Unless you add additional routes this will respond with `404 Not Found` to
     /// all requests.
     pub fn new() -> Self {
